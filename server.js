@@ -26,9 +26,10 @@ const connection = mysql.createConnection({
 
 // connect to database
 connection.connect();
-app.use(express.static('./public'))
-app.use(bodyParser.urlencoded({extended: false}))
-app.use(morgan('short'))
+app.use(express.static('./public'));
+//app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.json());
+app.use(morgan('dev'));
 
 app.get('/phone/all', (req, res) => {
     console.log("Get all!");
@@ -83,8 +84,11 @@ app.get('/phone/type/:type', (req, res) => {
 
 app.post('/phone/add', (req, result) => {
     var aPhone = req.body;
-    console.log("Post Add phone!",aPhone.First);
-    connection.query("INSERT INTO PhoneBook(First, Last, Phone, Type) VALUES ('"+aPhone.First+"','"+aPhone.Last+"','"+aPhone.Phone+"','"+aPhone.Type+"')", function (err, res, fields) {
+    console.log("Post Add phone!",aPhone);
+    queryString="INSERT INTO PhoneBook(First, Last, Phone, Type) VALUES ('"
+    +aPhone.First+"','"+aPhone.Last+"','"+aPhone.Phone+"','"+aPhone.Type+"')";
+    console.log("Add:"+queryString)
+    connection.query(queryString, function (err, res, fields) {
 	if (err) {
 	    console.log("Error: ",err.message);
 	    result.json(err.message);
