@@ -13,28 +13,7 @@ var rows;
 // Set up events when page is ready
 $(document).ready(function () {
 
-	//processResults(message.rows);
-
-	// The Add message is call back after a request to add a new row to the phone directory
-	// It creates a modal with the first and last name, and the status (success, failure) from the server.
-	//It also clears out the data entered into the add fields
-  	if (operation == 'Add') {
-  	    $('#modalMessage').text($('#addfirst').val()+" "+$('#addlast').val()+ ": "+message.Status);
-  	    $('#modalTitle').text("Record Add");
-  	    $('#addchangemodal').modal('show');
-  	    $('#addfirst').val("");
-  	    $('#addlast').val("");
-  	    $('#addphone').val("");
-  	    $('#addtype').val("");
-  	}
-	// The update message is a response after asking the server to update a row.
-	// Dispays the status message from the server in a modal
-  	if (operation == 'update') {
-  	    $('#modalMessage').text($('#editfirst').val()+" "+$('#editlast').val()+ ": "+message.Status);
-  	    $('#modalTitle').text("Record Change");
-  	    $('#addchangemodal').modal('show');
-  	}
-	// Displays a message after a record is delected
+	// Displays a message after a record is deleted
   	if (operation == 'delete') {
   	    $('#searchresults').text("Deleted: "+rows[recIndex].First+" "+rows[recIndex].Last);
   	}
@@ -137,6 +116,16 @@ function processEdit(){
     $('#editphone').val( $(row).find('.phone').text());
     $('#edittype').val( $(row).find('.type').text());
 }
+
+function changeDone(status) {
+	console.log("change done:", status);
+	// The update message is a response after asking the server to update a row.
+	// Dispays the status message from the server in a modal
+	$('#modalMessage').text($('#editfirst').val()+" "+$('#editlast').val()+ ": ");
+	$('#modalTitle').text("Record Change");
+	$('#addchangemodal').modal('show');
+	$('#modalStatus').text(status);
+}
 // This is called when the "Save" button in the edit form is pressed.
 // It takes the updated data, and the saves "selectid", and sends the record to the server
 // ot update the database.
@@ -157,15 +146,7 @@ function updateEntry(){
 		error: function(err) {
 			console.log('Add error',err.message);
 		  }
-	})
-    //socket.emit('message', {
-    //	operation: "Update",
-    //	First: $('#editfirst').val(),
-    //	Last: $('#editlast').val(),
-    //	Phone: $('#editphone').val(),
-    //	Type: $('#edittype').val(),
-    //	RecNum: selectid
-    //});	
+	}).done(function (status) {changeDone(status);});
 }
 
 function addDone(status) {
@@ -210,7 +191,12 @@ function DeleteConfirm() {
 }
 // Calls the server with a recordID of a row to delete
 function processDelete(){
-    var id=$(this).attr('ID');
+	var id=$(this).attr('ID');
+	const URL="/phone/delete/"+id;
+	console.log("Delete:"+URL)
+	$.get(URL, function(resp,status){
+		processResults(resp);
+	})
     //socket.emit('message', {
     //	operation: "Delete",
     //	RecNum: selectid
