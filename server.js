@@ -102,7 +102,7 @@ app.post('/phone/add', (req, result) => {
 
 app.put('/phone/update', (req, result) => {
     var aPhone = req.body;
-    console.log("put!",aPhone.Type);
+    console.log("put!",aPhone);
     queryString = "UPDATE PhoneBook SET First='"+aPhone.First+"', Last='"+aPhone.Last+"', Phone='"+aPhone.Phone+"', Type='"+aPhone.Type+"' WHERE RecNum='"+aPhone.RecNum+"'";
     
     connection.query(queryString, function (err, res, fields) {
@@ -110,8 +110,24 @@ app.put('/phone/update', (req, result) => {
 			     console.log("Error: ",err.message);
 			     result.json(err.message);
 			 } else {
-			     console.log(res.insertId);
-			     result.json(res.insertID);
+			     console.log(res.message);
+			     result.json(res.message);
+			 }
+		     })
+
+})
+
+app.put('/phone/delete/:id', (req, result) => {
+    var recno = req.params.id;
+    console.log("delete!",recno);    
+    queryString = "DELETE FROM PhoneBook WHERE RecNum='"+recno+"'";
+    connection.query(queryString, function (err, res, fields) {
+			 if (err) {
+			     console.log("Error: ",err.message);
+			     result.json(err.message);
+			 } else {
+			     console.log(res.message);
+			     result.json(res.message);
 			 }
 		     })
 
