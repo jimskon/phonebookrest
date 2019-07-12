@@ -5,7 +5,7 @@
 // The port used for this MUST match the port used on the server side, and must note be a port
 // used by anyone else.
 var port='8082' // Must match port used on server, port>8000
-var host = "localhost"
+var host = "cslab.kenyon.edu"
 var operation="";	// operation
 var selectid;
 var recIndex
